@@ -1,0 +1,202 @@
+// Snapora — PostgreSQL schema
+// Core entities: User, Vlog, Like (per docs/DB-Design.md)
+// Auth extensions: Account, Session, VerificationToken (Auth.js adapter + future OAuth)
+// AuditLog supports security audit requirements
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------------------------------------------------------------------------
+// Enums
+// ---------------------------------------------------------------------------
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+}
+
+enum VerificationTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
+
+enum AuditAction {
+  LOGIN_SUCCESS
+  LOGIN_FAILURE
+  LOGOUT
+  REGISTER
+  PASSWORD_RESET_REQUEST
+  PASSWORD_RESET_COMPLETE
+  EMAIL_VERIFICATION
+  PROFILE_UPDATE
+  ACCOUNT_LOCKED
+  UNAUTHORIZED_ACCESS
+  SESSION_CREATED
+  SESSION_EXPIRED
+}
+
+// ---------------------------------------------------------------------------
+// User — account identity (docs + auth extensions)
+// ---------------------------------------------------------------------------
+
+model User {
+  id                  String     @id @default(cuid())
+  name                String
+  username            String?    @unique
+  email               String     @unique
+  emailVerified       DateTime?
+  password            String     // bcrypt hash — field name matches DB-Design.md
+  image               String?
+  role                UserRole   @default(USER)
+  status              UserStatus @default(PENDING_VERIFICATION)
+  failedLoginAttempts Int        @default(0)
+  lockedUntil         DateTime?
+  createdAt           DateTime   @default(now())
+  updatedAt           DateTime   @updatedAt
+  deletedAt           DateTime?
+
+  accounts  Account[]
+  sessions  Session[]
+  vlogs     Vlog[]
+  likes     Like[]
+  auditLogs AuditLog[]
+
+  @@index([email])
+  @@index([status])
+  @@index([role])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+// ---------------------------------------------------------------------------
+// Auth.js adapter models — enables database sessions & future OAuth providers
+// Primary session strategy remains JWT (Credentials); tables support extension.
+// ---------------------------------------------------------------------------
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expires])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String                @unique
+  expires    DateTime
+  type       VerificationTokenType @default(EMAIL_VERIFICATION)
+  createdAt  DateTime              @default(now())
+
+  @@unique([identifier, token])
+  @@index([identifier])
+  @@index([expires])
+  @@map("verification_tokens")
+}
+
+// ---------------------------------------------------------------------------
+// Vlog — author-owned posts (docs/DB-Design.md)
+// ---------------------------------------------------------------------------
+
+model Vlog {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String
+  viewCount   Int       @default(0)
+  userId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  likes Like[]
+
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@index([deletedAt])
+  @@map("vlogs")
+}
+
+// ---------------------------------------------------------------------------
+// Like — join table with uniqueness constraint (docs/DB-Design.md)
+// ---------------------------------------------------------------------------
+
+model Like {
+  id        String   @id @default(cuid())
+  userId    String
+  vlogId    String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vlog Vlog @relation(fields: [vlogId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vlogId])
+  @@index([vlogId])
+  @@index([userId])
+  @@map("likes")
+}
+
+// ---------------------------------------------------------------------------
+// AuditLog — security audit trail for auth events
+// ---------------------------------------------------------------------------
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  userId    String?
+  action    AuditAction
+  ipAddress String?
+  userAgent String?     @db.Text
+  metadata  Json?
+  createdAt DateTime    @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt(sort: Desc)])
+  @@map("audit_logs")
+}
