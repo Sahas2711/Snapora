@@ -1,0 +1,590 @@
+openapi: 3.0.3
+info:
+  title: Snapora Vlogging API
+  description: REST API for Snapora – a vlogging platform built with Next.js 15, Prisma, and NextAuth.js.
+  version: 1.0.0
+  contact:
+    name: Snapora Team
+
+servers:
+  - url: https://snapora.vercel.app/api
+    description: Production server
+  - url: http://localhost:3000/api
+    description: Local development server
+
+security:
+  - cookieAuth: []          # applied globally; override per operation where needed
+
+paths:
+  /auth/register:
+    post:
+      operationId: register
+      summary: Register a new user
+      tags: [Authentication]
+      security: []          # no authentication required
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '409':
+          description: Email already in use
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: Email already in use
+
+  /auth/signin:
+    post:
+      operationId: login
+      summary: Sign in (login)
+      tags: [Authentication]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful, session cookie set
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                description: Session cookie
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: Invalid email or password
+
+  /auth/signout:
+    post:
+      operationId: logout
+      summary: Sign out (logout)
+      tags: [Authentication]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Logged out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Logged out
+        '401':
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: Not authenticated
+
+  /vlogs:
+    get:
+      operationId: getAllVlogs
+      summary: Get all vlogs
+      tags: [Vlogs]
+      security: []
+      responses:
+        '200':
+          description: List of vlogs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlogListResponse'
+    post:
+      operationId: createVlog
+      summary: Create a new vlog
+      tags: [Vlogs]
+      security:
+        - cookieAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVlogRequest'
+      responses:
+        '201':
+          description: Vlog created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlogResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: Title and imageUrl are required
+        '401':
+          description: Unauthorized (missing or invalid session)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /vlogs/{id}:
+    get:
+      operationId: getVlogById
+      summary: Get a single vlog by ID
+      tags: [Vlogs]
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The vlog ID
+      responses:
+        '200':
+          description: Vlog details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlogResponse'
+        '404':
+          description: Vlog not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: Vlog not found
+    put:
+      operationId: updateVlog
+      summary: Update a vlog (owner only)
+      tags: [Vlogs]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The vlog ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVlogRequest'
+      responses:
+        '200':
+          description: Vlog updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VlogResponse'
+        '403':
+          description: Forbidden (not owner)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: You are not authorized to edit this vlog
+        '404':
+          description: Vlog not found
+    delete:
+      operationId: deleteVlog
+      summary: Delete a vlog (owner only)
+      tags: [Vlogs]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The vlog ID
+      responses:
+        '200':
+          description: Vlog deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string
+                    example: Vlog deleted successfully
+        '403':
+          description: Forbidden (not owner)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: You are not authorized to delete this vlog
+        '404':
+          description: Vlog not found
+
+  /vlogs/{id}/like:
+    post:
+      operationId: likeVlog
+      summary: Like a vlog
+      tags: [Engagement]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The vlog ID
+      responses:
+        '201':
+          description: Vlog liked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LikeActionResponse'
+        '409':
+          description: Already liked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: You already liked this vlog
+        '401':
+          description: Unauthorized
+    delete:
+      operationId: unlikeVlog
+      summary: Unlike a vlog
+      tags: [Engagement]
+      security:
+        - cookieAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The vlog ID
+      responses:
+        '200':
+          description: Vlog unliked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LikeActionResponse'
+        '409':
+          description: Not liked yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: You have not liked this vlog
+        '401':
+          description: Unauthorized
+
+  /vlogs/{id}/view:
+    post:
+      operationId: incrementViewCount
+      summary: Increment view count
+      tags: [Engagement]
+      security: []          # no auth required
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The vlog ID
+      responses:
+        '200':
+          description: View count updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      viewCount:
+                        type: integer
+                        example: 43
+
+  /profile:
+    get:
+      operationId: getOwnProfile
+      summary: Get own profile (authenticated user)
+      tags: [Profile]
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: User profile with vlogs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '401':
+          description: Unauthorized
+
+  /users/{id}:
+    get:
+      operationId: getUserProfile
+      summary: Get user profile and their vlogs
+      tags: [Profile]
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The user ID
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                status: error
+                message: User not found
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: next-auth.session-token   # Default NextAuth.js cookie name
+
+  schemas:
+    RegisterRequest:
+      type: object
+      required:
+        - name
+        - email
+        - password
+      properties:
+        name:
+          type: string
+          example: John Doe
+        email:
+          type: string
+          format: email
+          example: john@example.com
+        password:
+          type: string
+          format: password
+          minLength: 8
+          example: SecureP@ss1
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    AuthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            user:
+              $ref: '#/components/schemas/User'
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+
+    Vlog:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+          format: uri
+        viewCount:
+          type: integer
+        likeCount:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    VlogResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            vlog:
+              $ref: '#/components/schemas/Vlog'
+
+    VlogListResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            vlogs:
+              type: array
+              items:
+                $ref: '#/components/schemas/Vlog'
+
+    CreateVlogRequest:
+      type: object
+      required:
+        - title
+        - imageUrl
+      properties:
+        title:
+          type: string
+          example: My First Vlog
+        description:
+          type: string
+          example: Exploring the city today!
+        imageUrl:
+          type: string
+          format: uri
+          description: Cover image URL (uploaded to Cloudinary)
+
+    UpdateVlogRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        imageUrl:
+          type: string
+          format: uri
+
+    LikeActionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            liked:
+              type: boolean
+            likeCount:
+              type: integer
+
+    ProfileResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: success
+        data:
+          type: object
+          properties:
+            user:
+              allOf:
+                - $ref: '#/components/schemas/User'
+                - type: object
+                  properties:
+                    vlogs:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Vlog'
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        message:
+          type: string
