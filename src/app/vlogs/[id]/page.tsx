@@ -1,5 +1,8 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { auth } from "@/auth";
+import { Button } from "@/components/ui/button";
 import { VlogViewCounter } from "@/components/vlogs/vlog-view-counter";
 import { NotFoundError } from "@/lib/errors/auth.error";
 import { vlogService } from "@/services/vlog.service";
@@ -11,6 +14,7 @@ type PageProps = {
 };
 
 export default async function VlogDetailPage({ params }: PageProps) {
+  const session = await auth();
   const { id } = await params;
   let vlog;
 
@@ -54,6 +58,14 @@ export default async function VlogDetailPage({ params }: PageProps) {
             <span>{vlog.likeCount} likes</span>
             <span>{new Date(vlog.createdAt).toLocaleDateString()}</span>
           </div>
+
+          {session?.user?.id === vlog.user.id ? (
+            <div className="mt-6">
+              <Link href={`/vlogs/${vlog.id}/edit`}>
+                <Button variant="secondary">Edit vlog</Button>
+              </Link>
+            </div>
+          ) : null}
 
           <div className="mt-8 rounded-2xl bg-gray-50 p-5 text-gray-700 leading-7">
             {vlog.description || "No description provided for this vlog yet."}
