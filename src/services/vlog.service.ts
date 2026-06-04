@@ -108,4 +108,23 @@ export const vlogService = {
       throw handlePrismaError(error, "updateVlog");
     }
   },
+
+  async deleteVlog(id: string, userId: string) {
+    const existing = await vlogRepository.findById(id);
+
+    if (!existing) {
+      throw new NotFoundError("Vlog not found");
+    }
+
+    if (existing.user.id !== userId) {
+      throw new AuthorizationError("You are not authorized to delete this vlog");
+    }
+
+    try {
+      await vlogRepository.softDelete(id);
+      return { id };
+    } catch (error) {
+      throw handlePrismaError(error, "deleteVlog");
+    }
+  },
 };
