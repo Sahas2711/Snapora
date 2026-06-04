@@ -80,6 +80,14 @@ export default async function ProfilePage() {
                     >
                       {vlog.title}
                     </Link>
+                    <div className="mt-2">
+                      <Link
+                        href={`/vlogs/${vlog.id}/edit`}
+                        className="text-sm text-blue-600 hover:underline"
+                      >
+                        Edit
+                      </Link>
+                    </div>
                     <p className="text-sm text-gray-500 mt-1">
                       {vlog.viewCount} views · {vlog.likeCount} likes
                     </p>

@@ -61,4 +61,12 @@ export const vlogRepository = {
       },
     });
   },
+
+  update(id: string, data: Prisma.VlogUpdateInput) {
+    return prisma.vlog.update({
+      where: { id },
+      data,
+      include: publicVlogInclude,
+    });
+  },
 };

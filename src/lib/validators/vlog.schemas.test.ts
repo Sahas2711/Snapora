@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { createVlogSchema } from "./vlog.schemas.ts";
+import { createVlogSchema, updateVlogSchema } from "./vlog.schemas.ts";
 
 test("createVlogSchema accepts required fields and normalizes empty description", () => {
   const parsed = createVlogSchema.parse({
@@ -18,6 +18,12 @@ test("createVlogSchema rejects missing title", () => {
     title: "",
     imageUrl: "https://res.cloudinary.com/demo/image/upload/sample.jpg",
   });
+
+  assert.equal(result.success, false);
+});
+
+test("updateVlogSchema requires at least one field", () => {
+  const result = updateVlogSchema.safeParse({});
 
   assert.equal(result.success, false);
 });

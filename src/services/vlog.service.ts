@@ -1,6 +1,6 @@
-import { NotFoundError } from "@/lib/errors/auth.error";
+import { AuthorizationError, NotFoundError } from "@/lib/errors/auth.error";
 import { handlePrismaError } from "@/lib/errors/database.error";
-import type { CreateVlogInput } from "@/lib/validators/vlog.schemas";
+import type { CreateVlogInput, UpdateVlogInput } from "@/lib/validators/vlog.schemas";
 import { vlogRepository } from "@/repositories/vlog.repository";
 import type { PublicVlog } from "@/types/vlog.types";
 
@@ -81,6 +81,31 @@ export const vlogService = {
       return await vlogRepository.incrementViewCount(id);
     } catch (error) {
       throw handlePrismaError(error, "incrementViewCount");
+    }
+  },
+
+  async updateVlog(id: string, userId: string, input: UpdateVlogInput) {
+    const existing = await vlogRepository.findById(id);
+
+    if (!existing) {
+      throw new NotFoundError("Vlog not found");
+    }
+
+    if (existing.user.id !== userId) {
+      throw new AuthorizationError("You are not authorized to edit this vlog");
+    }
+
+    try {
+      const vlog = await vlogRepository.update(id, {
+        title: input.title?.trim(),
+        description:
+          input.description !== undefined ? input.description ?? null : undefined,
+        imageUrl: input.imageUrl,
+      });
+
+      return toPublicVlog(vlog);
+    } catch (error) {
+      throw handlePrismaError(error, "updateVlog");
     }
   },
 };
