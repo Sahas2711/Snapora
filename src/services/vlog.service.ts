@@ -1,9 +1,14 @@
+import { NotFoundError } from "@/lib/errors/auth.error";
 import { handlePrismaError } from "@/lib/errors/database.error";
 import type { CreateVlogInput } from "@/lib/validators/vlog.schemas";
 import { vlogRepository } from "@/repositories/vlog.repository";
 import type { PublicVlog } from "@/types/vlog.types";
 
-export function toPublicVlog(vlog: Awaited<ReturnType<typeof vlogRepository.create>>): PublicVlog {
+type VlogRecord =
+  | Awaited<ReturnType<typeof vlogRepository.create>>
+  | Awaited<ReturnType<typeof vlogRepository.findById>>;
+
+export function toPublicVlog(vlog: NonNullable<VlogRecord>): PublicVlog {
   return {
     id: vlog.id,
     title: vlog.title,
@@ -35,6 +40,47 @@ export const vlogService = {
       return toPublicVlog(vlog);
     } catch (error) {
       throw handlePrismaError(error, "createVlog");
+    }
+  },
+
+  async getAllVlogs() {
+    try {
+      const vlogs = await vlogRepository.findMany();
+      return vlogs.map((vlog) => toPublicVlog(vlog));
+    } catch (error) {
+      throw handlePrismaError(error, "getAllVlogs");
+    }
+  },
+
+  async getVlogById(id: string) {
+    try {
+      const vlog = await vlogRepository.findById(id);
+
+      if (!vlog) {
+        throw new NotFoundError("Vlog not found");
+      }
+
+      return toPublicVlog(vlog);
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error;
+      }
+
+      throw handlePrismaError(error, "getVlogById");
+    }
+  },
+
+  async incrementViewCount(id: string) {
+    const vlog = await vlogRepository.findById(id);
+
+    if (!vlog) {
+      throw new NotFoundError("Vlog not found");
+    }
+
+    try {
+      return await vlogRepository.incrementViewCount(id);
+    } catch (error) {
+      throw handlePrismaError(error, "incrementViewCount");
     }
   },
 };

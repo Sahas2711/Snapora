@@ -22,6 +22,9 @@ export default async function Home() {
             <Link href="/create-vlog">
               <Button>Create vlog</Button>
             </Link>
+            <Link href="/vlogs">
+              <Button variant="secondary">Browse vlogs</Button>
+            </Link>
             <Link href="/profile">
               <Button variant="secondary">View profile</Button>
             </Link>
@@ -30,6 +33,9 @@ export default async function Home() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/register">
               <Button>Get started</Button>
+            </Link>
+            <Link href="/vlogs">
+              <Button variant="secondary">Browse vlogs</Button>
             </Link>
             <Link href="/login">
               <Button variant="secondary">Sign in</Button>

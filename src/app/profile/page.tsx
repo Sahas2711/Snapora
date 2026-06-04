@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
@@ -73,7 +74,12 @@ export default async function ProfilePage() {
                     key={vlog.id}
                     className="border border-gray-200 rounded-lg p-4"
                   >
-                    <h3 className="font-medium text-gray-900">{vlog.title}</h3>
+                    <Link
+                      href={`/vlogs/${vlog.id}`}
+                      className="font-medium text-gray-900 hover:text-blue-600"
+                    >
+                      {vlog.title}
+                    </Link>
                     <p className="text-sm text-gray-500 mt-1">
                       {vlog.viewCount} views · {vlog.likeCount} likes
                     </p>

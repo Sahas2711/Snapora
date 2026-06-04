@@ -23,6 +23,12 @@ export function Navbar() {
         </Link>
 
         <div className="flex items-center gap-4">
+          <Link
+            href="/vlogs"
+            className="text-sm font-medium text-gray-700 hover:text-blue-600"
+          >
+            Browse vlogs
+          </Link>
           {status === "loading" ? (
             <span className="text-sm text-gray-500">Loading...</span>
           ) : session?.user ? (
