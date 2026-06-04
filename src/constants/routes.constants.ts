@@ -9,6 +9,6 @@ export const PUBLIC_ROUTES = [
 
 export const AUTH_ROUTES = ["/login", "/register"] as const;
 
-export const PROTECTED_ROUTES = ["/profile", "/vlogs/new"] as const;
+export const PROTECTED_ROUTES = ["/profile", "/create-vlog", "/vlogs/new"] as const;
 
 export const ADMIN_ROUTES = ["/admin"] as const;
