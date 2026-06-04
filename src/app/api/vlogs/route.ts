@@ -20,3 +20,15 @@ export async function POST(request: NextRequest) {
     return handleApiError(error, { method: "POST", path });
   }
 }
+
+export async function GET() {
+  const path = "/api/vlogs";
+
+  try {
+    const vlogs = await vlogService.getAllVlogs();
+
+    return successResponse({ vlogs });
+  } catch (error) {
+    return handleApiError(error, { method: "GET", path });
+  }
+}
