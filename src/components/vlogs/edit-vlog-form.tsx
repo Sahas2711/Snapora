@@ -79,6 +79,7 @@ async function uploadCoverImage(file: File) {
 export function EditVlogForm({ vlogId, defaultValues }: EditVlogFormProps) {
   const router = useRouter();
   const [isSubmitting, startTransition] = useTransition();
+  const [isDeleting, startDeleteTransition] = useTransition();
   const [title, setTitle] = useState(defaultValues.title);
   const [description, setDescription] = useState(defaultValues.description ?? "");
   const [imageUrl, setImageUrl] = useState(defaultValues.imageUrl);
@@ -146,6 +147,36 @@ export function EditVlogForm({ vlogId, defaultValues }: EditVlogFormProps) {
     });
   }
 
+  function handleDelete() {
+    const confirmed = window.confirm(
+      "Delete this vlog? This will remove it from public views.",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setError(undefined);
+    setSuccess(undefined);
+
+    startDeleteTransition(async () => {
+      const response = await fetch(`/api/vlogs/${vlogId}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      const payload = (await response.json()) as { message?: string };
+
+      if (!response.ok) {
+        setError(payload.message ?? "Unable to delete vlog");
+        return;
+      }
+
+      router.push("/profile");
+      router.refresh();
+    });
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div>
@@ -203,9 +234,20 @@ export function EditVlogForm({ vlogId, defaultValues }: EditVlogFormProps) {
       {error ? <p className="text-red-600 text-sm">{error}</p> : null}
       {success ? <p className="text-emerald-600 text-sm">{success}</p> : null}
 
-      <Button type="submit" className="w-full sm:w-auto" disabled={isSubmitting || isUploading}>
-        {isSubmitting ? "Saving..." : "Save changes"}
-      </Button>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <Button type="submit" className="w-full sm:w-auto" disabled={isSubmitting || isUploading || isDeleting}>
+          {isSubmitting ? "Saving..." : "Save changes"}
+        </Button>
+        <Button
+          type="button"
+          variant="danger"
+          className="w-full sm:w-auto"
+          disabled={isSubmitting || isUploading || isDeleting}
+          onClick={handleDelete}
+        >
+          {isDeleting ? "Deleting..." : "Delete vlog"}
+        </Button>
+      </div>
     </form>
   );
 }

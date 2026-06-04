@@ -38,3 +38,17 @@ export async function PUT(request: Request, context: RouteContext) {
     return handleApiError(error, { method: "PUT", path });
   }
 }
+
+export async function DELETE(_request: Request, context: RouteContext) {
+  const path = "/api/vlogs/[id]";
+
+  try {
+    const session = await requireAuth();
+    const { id } = await context.params;
+    await vlogService.deleteVlog(id, session.user.id);
+
+    return successResponse({}, 200, "Vlog deleted successfully");
+  } catch (error) {
+    return handleApiError(error, { method: "DELETE", path });
+  }
+}

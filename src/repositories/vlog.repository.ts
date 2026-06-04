@@ -69,4 +69,16 @@ export const vlogRepository = {
       include: publicVlogInclude,
     });
   },
+
+  softDelete(id: string) {
+    return prisma.vlog.update({
+      where: { id },
+      data: {
+        deletedAt: new Date(),
+      },
+      select: {
+        id: true,
+      },
+    });
+  },
 };
