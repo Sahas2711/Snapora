@@ -28,6 +28,12 @@ export function Navbar() {
           ) : session?.user ? (
             <>
               <Link
+                href="/create-vlog"
+                className="text-sm font-medium text-gray-700 hover:text-blue-600"
+              >
+                Create vlog
+              </Link>
+              <Link
                 href="/profile"
                 className="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600"
               >

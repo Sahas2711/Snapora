@@ -19,8 +19,11 @@ export default async function Home() {
 
         {session?.user ? (
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link href="/create-vlog">
+              <Button>Create vlog</Button>
+            </Link>
             <Link href="/profile">
-              <Button>View profile</Button>
+              <Button variant="secondary">View profile</Button>
             </Link>
           </div>
         ) : (
