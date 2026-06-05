@@ -19,6 +19,7 @@ export type ActionState = {
   error?: string;
   success?: string;
   fieldErrors?: Record<string, string[]>;
+  actionUrl?: string;
 };
 
 export async function loginAction(
@@ -66,10 +67,15 @@ export async function registerAction(
 
     const result = await authService.register(input, {});
 
+    // Save avatar if one was uploaded during registration
+    const avatarUrl = formData.get("avatarUrl");
+    if (avatarUrl && typeof avatarUrl === "string" && avatarUrl.startsWith("http")) {
+      await authService.updateProfile(result.user.id, { image: avatarUrl });
+    }
+
     return {
-      success: `Account created. Please verify your email before signing in.${
-        result.verifyUrl ? ` Dev link: ${result.verifyUrl}` : ""
-      }`,
+      success: "Account created. Click the link below to verify your email.",
+      actionUrl: result.verifyUrl,
     };
   } catch (error) {
     if (error instanceof ValidationError) {
@@ -101,8 +107,8 @@ export async function forgotPasswordAction(
 
     return {
       success: result.message,
-      ...( "resetUrl" in result && result.resetUrl
-        ? { error: `Dev reset link: ${result.resetUrl}` }
+      ...("resetUrl" in result && result.resetUrl
+        ? { actionUrl: result.resetUrl }
         : {}),
     };
   } catch (error) {

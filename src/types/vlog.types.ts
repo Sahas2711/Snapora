@@ -3,6 +3,7 @@ export type PublicVlog = {
   title: string;
   description: string | null;
   imageUrl: string;
+  videoUrl: string | null;
   viewCount: number;
   likeCount: number;
   createdAt: Date;

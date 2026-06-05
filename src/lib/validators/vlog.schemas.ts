@@ -9,6 +9,7 @@ export const createVlogSchema = z.object({
     .optional()
     .transform((value) => (value && value.length > 0 ? value : undefined)),
   imageUrl: z.url("Image URL must be a valid URL"),
+  videoUrl: z.url("Video URL must be a valid URL").optional().nullable(),
 });
 
 export type CreateVlogInput = z.infer<typeof createVlogSchema>;

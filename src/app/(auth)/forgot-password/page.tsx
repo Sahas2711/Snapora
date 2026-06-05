@@ -35,11 +35,21 @@ export default function ForgotPasswordPage() {
         </div>
 
         {state.error ? (
-          <p className="text-amber-700 text-sm break-all">{state.error}</p>
+          <p className="text-red-600 text-sm break-all">{state.error}</p>
         ) : null}
 
         {state.success ? (
-          <p className="text-emerald-600 text-sm">{state.success}</p>
+          <div className="rounded-lg bg-blue-50 border border-blue-200 p-4 space-y-3">
+            <p className="text-blue-700 text-sm font-medium">{state.success}</p>
+            {state.actionUrl ? (
+              <a
+                href={state.actionUrl}
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg transition-colors"
+              >
+                Reset password now →
+              </a>
+            ) : null}
+          </div>
         ) : null}
 
         <Button type="submit" className="w-full" disabled={pending}>

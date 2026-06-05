@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 type FieldErrors = Partial<Record<"title" | "description" | "imageUrl", string[]>>;
 
@@ -196,19 +197,14 @@ export function EditVlogForm({ vlogId, defaultValues }: EditVlogFormProps) {
 
       <div>
         <Label htmlFor="description">Description</Label>
-        <textarea
+        <Textarea
           id="description"
           name="description"
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           rows={5}
-          className={`w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-            fieldErrors.description?.[0] ? "border-red-500" : "border-gray-300"
-          }`}
+          error={fieldErrors.description?.[0]}
         />
-        {fieldErrors.description?.[0] ? (
-          <p className="text-red-600 text-sm mt-1">{fieldErrors.description[0]}</p>
-        ) : null}
       </div>
 
       <div>
@@ -243,7 +239,7 @@ export function EditVlogForm({ vlogId, defaultValues }: EditVlogFormProps) {
         </Button>
         <Button
           type="button"
-          variant="danger"
+          variant="destructive"
           className="w-full sm:w-auto"
           disabled={isSubmitting || isUploading || isDeleting}
           onClick={handleDelete}

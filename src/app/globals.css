@@ -1,19 +1,119 @@
 @import "tailwindcss";
 
+/* ─── Light theme ─────────────────────────────────────────── */
 :root {
-  --background: #F9FAFB;
-  --foreground: #111827;
+  --bg-base:                #ffffff;
+  --bg-subtle:              #f9fafb;
+  --bg-muted:               #f3f4f6;
+  --bg-card:                #ffffff;
+  --bg-popover:             #ffffff;
+  --bg-border:              #e5e7eb;
+  --bg-border-soft:         #f3f4f6;
+  --text-base:              #111827;
+  --text-muted:             #6b7280;
+  --text-subtle:            #9ca3af;
+  --ring:                   #3b82f6;
+
+  /* Base semantic color tokens (different names from @theme inline to avoid circular refs) */
+  --primary-base:           #2563eb;
+  --primary-foreground-base:#ffffff;
+  --secondary-base:         #f3f4f6;
+  --secondary-foreground-base: #1f2937;
+  --muted-base:             #f3f4f6;
+  --muted-foreground-base:  #6b7280;
+  --accent-base:            #f3f4f6;
+  --accent-foreground-base: #1f2937;
+  --destructive-base:       #ef4444;
+  --destructive-foreground-base: #ffffff;
+  --border-base:            #e5e7eb;
+  --input-base:             #e5e7eb;
+}
+
+/* ─── Dark theme ──────────────────────────────────────────── */
+.dark {
+  --bg-base:                #0f1117;
+  --bg-subtle:              #161b27;
+  --bg-muted:               #1e2433;
+  --bg-card:                #1a1f2e;
+  --bg-popover:             #1a1f2e;
+  --bg-border:              #2d3348;
+  --bg-border-soft:         #252b3b;
+  --text-base:              #f1f5f9;
+  --text-muted:             #94a3b8;
+  --text-subtle:            #64748b;
+  --ring:                   #60a5fa;
+
+  /* Base semantic color tokens (dark overrides) */
+  --primary-base:           #3b82f6;
+  --primary-foreground-base:#ffffff;
+  --secondary-base:         #1e2433;
+  --secondary-foreground-base: #f1f5f9;
+  --muted-base:             #1e2433;
+  --muted-foreground-base:  #94a3b8;
+  --accent-base:            #1e2433;
+  --accent-foreground-base: #f1f5f9;
+  --destructive-base:       #ef4444;
+  --destructive-foreground-base: #ffffff;
+  --border-base:            #2d3348;
+  --input-base:             #2d3348;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--bg-base);
+  --color-foreground: var(--text-base);
+
+  --color-card: var(--bg-card);
+  --color-card-foreground: var(--text-base);
+
+  --color-popover: var(--bg-popover);
+  --color-popover-foreground: var(--text-base);
+
+  --color-primary: var(--primary-base);
+  --color-primary-foreground: var(--primary-foreground-base);
+
+  --color-secondary: var(--secondary-base);
+  --color-secondary-foreground: var(--secondary-foreground-base);
+
+  --color-muted: var(--muted-base);
+  --color-muted-foreground: var(--muted-foreground-base);
+
+  --color-accent: var(--accent-base);
+  --color-accent-foreground: var(--accent-foreground-base);
+
+  --color-destructive: var(--destructive-base);
+  --color-destructive-foreground: var(--destructive-foreground-base);
+
+  --color-border: var(--border-base);
+  --color-input: var(--input-base);
+  --color-ring: var(--ring);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, monospace;
 }
 
+/* ─── Base ────────────────────────────────────────────────── */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-base);
+  font-family: var(--font-sans);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* ─── Dark-mode friendlies ───────────────────────────────── */
+.dark .shadow-sm  { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.4) !important; }
+.dark .shadow-md  { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5) !important; }
+.dark .shadow-lg  { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.6) !important; }
+.dark .shadow-xl  { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.7) !important; }
+
+/* Input / textarea dark overrides */
+.dark input:not([type="file"]):not([type="checkbox"]),
+.dark textarea,
+.dark select {
+  background-color: var(--bg-muted) !important;
+  border-color: var(--bg-border) !important;
+  color: var(--text-base) !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: var(--text-subtle) !important;
 }

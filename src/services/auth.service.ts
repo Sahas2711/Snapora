@@ -123,7 +123,7 @@ export const authService = {
 
       return {
         user: toPublicUser(user),
-        verifyUrl: process.env.NODE_ENV === "development" ? verifyUrl : undefined,
+        verifyUrl,
       };
     } catch (error) {
       throw handlePrismaError(error, "register");
@@ -278,7 +278,7 @@ export const authService = {
 
     return {
       message: "If that email exists, a reset link has been sent.",
-      ...(process.env.NODE_ENV === "development" ? { resetUrl } : {}),
+      resetUrl,
     };
   },
 
@@ -367,6 +367,7 @@ export const authService = {
         title: vlog.title,
         description: vlog.description,
         imageUrl: vlog.imageUrl,
+        videoUrl: vlog.videoUrl ?? null,
         viewCount: vlog.viewCount,
         likeCount: vlog._count.likes,
         createdAt: vlog.createdAt,
@@ -400,6 +401,7 @@ export const authService = {
           title: vlog.title,
           description: vlog.description,
           imageUrl: vlog.imageUrl,
+          videoUrl: vlog.videoUrl ?? null,
           viewCount: vlog.viewCount,
           likeCount: vlog._count.likes,
           createdAt: vlog.createdAt,
