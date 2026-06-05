@@ -1,4 +1,3 @@
-import { UserRole } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 import { edgeAuth } from "@/auth/edge";
@@ -7,7 +6,10 @@ import {
   AUTH_ROUTES,
   PROTECTED_ROUTES,
 } from "@/constants/routes.constants";
-import { logUnauthorizedAccess } from "@/lib/logger/auth.logger";
+
+function logUnauthorizedAccess(pathname: string) {
+  console.warn(`[middleware] Unauthorized access attempt: ${pathname}`);
+}
 
 function matchesRoute(pathname: string, routes: readonly string[]) {
   return routes.some(
@@ -37,7 +39,7 @@ export default edgeAuth((req) => {
       return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    if (userRole !== UserRole.ADMIN) {
+    if (userRole !== "ADMIN") {
       logUnauthorizedAccess(pathname);
       return NextResponse.redirect(new URL("/", req.url));
     }
