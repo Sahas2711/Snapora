@@ -11,32 +11,35 @@ export default async function NewVlogPage() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
-        <section className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 sm:p-8">
-          <p className="text-sm font-semibold tracking-[0.2em] uppercase text-blue-600">
-            Create Vlog
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
+        {/* Header */}
+        <div className="mb-8">
+          <p className="text-xs font-semibold uppercase tracking-widest text-blue-600 mb-2">New story</p>
+          <h1 className="text-3xl font-bold text-gray-900">Publish a story</h1>
+          <p className="mt-2 text-gray-500 text-sm">
+            Add a title, cover image, and description. Your story will be live instantly.
           </p>
-          <h1 className="mt-3 text-3xl font-bold text-gray-900">
-            Publish a new story with a strong cover image
-          </h1>
-          <p className="mt-3 text-gray-600">
-            Add a title, short description, and Cloudinary-hosted cover image.
-          </p>
+        </div>
 
-          <div className="mt-8">
-            <CreateVlogForm />
-          </div>
-        </section>
+        {/* Form card */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-8">
+          <CreateVlogForm />
+        </div>
 
-        <aside className="bg-linear-to-br from-sky-50 to-white rounded-2xl border border-blue-100 p-6 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-900">Publishing notes</h2>
-          <ul className="mt-4 space-y-3 text-sm text-gray-600">
-            <li>Use a descriptive title so your vlog is easy to scan in lists.</li>
-            <li>Upload the cover image first. The form stores the Cloudinary URL only.</li>
-            <li>Keep descriptions short and readable for the card layout.</li>
-          </ul>
-        </aside>
+        {/* Tips */}
+        <div className="mt-5 grid sm:grid-cols-3 gap-3">
+          {[
+            { icon: "✦", tip: "Clear titles get more clicks. Keep it under 60 chars." },
+            { icon: "⬆", tip: "Upload your cover image first — it anchors the story." },
+            { icon: "✎", tip: "Descriptions show in cards. Two sentences is plenty." },
+          ].map((t) => (
+            <div key={t.tip} className="flex gap-2.5 bg-white rounded-xl border border-gray-100 p-4">
+              <span className="text-blue-500 text-sm mt-px shrink-0">{t.icon}</span>
+              <p className="text-xs text-gray-500 leading-relaxed">{t.tip}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

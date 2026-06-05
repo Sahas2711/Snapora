@@ -89,6 +89,7 @@ export const userRepository = {
             title: true,
             description: true,
             imageUrl: true,
+            videoUrl: true,
             viewCount: true,
             createdAt: true,
             updatedAt: true,

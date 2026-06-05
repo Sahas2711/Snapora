@@ -51,7 +51,7 @@ export default async function EditVlogPage({ params }: PageProps) {
           </div>
         </section>
 
-        <aside className="bg-linear-to-br from-sky-50 to-white rounded-2xl border border-blue-100 p-6 shadow-sm">
+        <aside className="bg-gradient-to-br from-sky-50 to-white rounded-2xl border border-blue-100 p-6 shadow-sm">
           <h2 className="text-lg font-semibold text-gray-900">Editing notes</h2>
           <ul className="mt-4 space-y-3 text-sm text-gray-600">
             <li>Keep the title concise so it still fits nicely in cards.</li>

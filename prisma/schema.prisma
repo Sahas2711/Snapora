@@ -1,8 +1,3 @@
-// Snapora — PostgreSQL schema
-// Core entities: User, Vlog, Like (per docs/DB-Design.md)
-// Auth extensions: Account, Session, VerificationToken (Auth.js adapter + future OAuth)
-// AuditLog supports security audit requirements
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -49,7 +44,7 @@ enum AuditAction {
 }
 
 // ---------------------------------------------------------------------------
-// User — account identity (docs + auth extensions)
+// User
 // ---------------------------------------------------------------------------
 
 model User {
@@ -58,15 +53,19 @@ model User {
   username            String?    @unique
   email               String     @unique
   emailVerified       DateTime?
-  password            String     // bcrypt hash — field name matches DB-Design.md
+  password            String
   image               String?
   role                UserRole   @default(USER)
   status              UserStatus @default(PENDING_VERIFICATION)
   failedLoginAttempts Int        @default(0)
   lockedUntil         DateTime?
-  createdAt           DateTime   @default(now())
-  updatedAt           DateTime   @updatedAt
-  deletedAt           DateTime?
+  bio                 String?
+  website             String?
+  twitter             String?
+  consentAcceptedAt DateTime?
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  deletedAt         DateTime?
 
   accounts  Account[]
   sessions  Session[]
@@ -82,8 +81,7 @@ model User {
 }
 
 // ---------------------------------------------------------------------------
-// Auth.js adapter models — enables database sessions & future OAuth providers
-// Primary session strategy remains JWT (Credentials); tables support extension.
+// Auth.js adapter models
 // ---------------------------------------------------------------------------
 
 model Account {
@@ -138,7 +136,7 @@ model VerificationToken {
 }
 
 // ---------------------------------------------------------------------------
-// Vlog — author-owned posts (docs/DB-Design.md)
+// Vlog
 // ---------------------------------------------------------------------------
 
 model Vlog {
@@ -146,6 +144,7 @@ model Vlog {
   title       String
   description String?
   imageUrl    String
+  videoUrl    String?
   viewCount   Int       @default(0)
   userId      String
   createdAt   DateTime  @default(now())
@@ -162,7 +161,7 @@ model Vlog {
 }
 
 // ---------------------------------------------------------------------------
-// Like — join table with uniqueness constraint (docs/DB-Design.md)
+// Like
 // ---------------------------------------------------------------------------
 
 model Like {
@@ -181,7 +180,7 @@ model Like {
 }
 
 // ---------------------------------------------------------------------------
-// AuditLog — security audit trail for auth events
+// AuditLog
 // ---------------------------------------------------------------------------
 
 model AuditLog {

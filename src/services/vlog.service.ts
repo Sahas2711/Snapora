@@ -19,6 +19,7 @@ export function toPublicVlog(vlog: NonNullable<VlogRecord>): PublicVlog {
     title: vlog.title,
     description: vlog.description,
     imageUrl: vlog.imageUrl,
+    videoUrl: vlog.videoUrl ?? null,
     viewCount: vlog.viewCount,
     likeCount: vlog._count.likes,
     createdAt: vlog.createdAt,
@@ -40,6 +41,7 @@ export const vlogService = {
         title: input.title.trim(),
         description: input.description ?? null,
         imageUrl: input.imageUrl,
+        videoUrl: input.videoUrl ?? null,
       });
 
       return toPublicVlog(vlog);
