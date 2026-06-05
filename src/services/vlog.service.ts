@@ -1,6 +1,11 @@
-import { AuthorizationError, NotFoundError } from "@/lib/errors/auth.error";
+import {
+  AuthorizationError,
+  ConflictError,
+  NotFoundError,
+} from "@/lib/errors/auth.error";
 import { handlePrismaError } from "@/lib/errors/database.error";
 import type { CreateVlogInput, UpdateVlogInput } from "@/lib/validators/vlog.schemas";
+import { likeRepository } from "@/repositories/like.repository";
 import { vlogRepository } from "@/repositories/vlog.repository";
 import type { PublicVlog } from "@/types/vlog.types";
 
@@ -126,5 +131,54 @@ export const vlogService = {
     } catch (error) {
       throw handlePrismaError(error, "deleteVlog");
     }
+  },
+
+  async likeVlog(id: string, userId: string) {
+    const vlog = await vlogRepository.findById(id);
+
+    if (!vlog) {
+      throw new NotFoundError("Vlog not found");
+    }
+
+    const existing = await likeRepository.findByUserAndVlog(userId, id);
+
+    if (existing) {
+      throw new ConflictError("You already liked this vlog");
+    }
+
+    try {
+      await likeRepository.create(userId, id);
+      const likeCount = await likeRepository.countByVlog(id);
+      return { liked: true, likeCount };
+    } catch (error) {
+      throw handlePrismaError(error, "likeVlog");
+    }
+  },
+
+  async unlikeVlog(id: string, userId: string) {
+    const vlog = await vlogRepository.findById(id);
+
+    if (!vlog) {
+      throw new NotFoundError("Vlog not found");
+    }
+
+    const existing = await likeRepository.findByUserAndVlog(userId, id);
+
+    if (!existing) {
+      throw new ConflictError("You have not liked this vlog");
+    }
+
+    try {
+      await likeRepository.delete(existing.id);
+      const likeCount = await likeRepository.countByVlog(id);
+      return { liked: false, likeCount };
+    } catch (error) {
+      throw handlePrismaError(error, "unlikeVlog");
+    }
+  },
+
+  async hasUserLikedVlog(id: string, userId: string) {
+    const like = await likeRepository.findByUserAndVlog(userId, id);
+    return Boolean(like);
   },
 };

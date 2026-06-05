@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
+import { VlogLikeButton } from "@/components/vlogs/vlog-like-button";
 import { VlogViewCounter } from "@/components/vlogs/vlog-view-counter";
 import { NotFoundError } from "@/lib/errors/auth.error";
 import { vlogService } from "@/services/vlog.service";
@@ -27,6 +28,10 @@ export default async function VlogDetailPage({ params }: PageProps) {
 
     throw error;
   }
+
+  const likedByCurrentUser = session?.user?.id
+    ? await vlogService.hasUserLikedVlog(vlog.id, session.user.id)
+    : false;
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -59,8 +64,17 @@ export default async function VlogDetailPage({ params }: PageProps) {
             <span>{new Date(vlog.createdAt).toLocaleDateString()}</span>
           </div>
 
+          <div className="mt-6">
+            <VlogLikeButton
+              vlogId={vlog.id}
+              initialLikeCount={vlog.likeCount}
+              initialLiked={likedByCurrentUser}
+              isAuthenticated={Boolean(session?.user?.id)}
+            />
+          </div>
+
           {session?.user?.id === vlog.user.id ? (
-            <div className="mt-6">
+            <div className="mt-4">
               <Link href={`/vlogs/${vlog.id}/edit`}>
                 <Button variant="secondary">Edit vlog</Button>
               </Link>
