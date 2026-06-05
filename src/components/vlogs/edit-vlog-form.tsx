@@ -48,7 +48,9 @@ async function uploadCoverImage(file: File) {
   const signaturePayload = (await signatureResponse.json()) as SignatureResponse | { message?: string };
 
   if (!signatureResponse.ok || !("data" in signaturePayload)) {
-    throw new Error(signaturePayload.message ?? "Unable to prepare upload");
+    throw new Error(
+      (signaturePayload as { message?: string }).message ?? "Unable to prepare upload",
+    );
   }
 
   const { cloudName, apiKey, timestamp, folder, signature } = signaturePayload.data;
@@ -136,8 +138,9 @@ export function EditVlogForm({ vlogId, defaultValues }: EditVlogFormProps) {
         | { message?: string; errors?: FieldErrors };
 
       if (!response.ok || !("data" in payload)) {
-        setError(payload.message ?? "Unable to update vlog");
-        setFieldErrors(payload.errors ?? {});
+        const errPayload = payload as { message?: string; errors?: FieldErrors };
+        setError(errPayload.message ?? "Unable to update vlog");
+        setFieldErrors(errPayload.errors ?? {});
         return;
       }
 

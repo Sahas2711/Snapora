@@ -38,6 +38,19 @@ export const vlogRepository = {
     });
   },
 
+  findManyByUserId(userId: string) {
+    return prisma.vlog.findMany({
+      where: {
+        userId,
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: publicVlogInclude,
+    });
+  },
+
   findById(id: string) {
     return prisma.vlog.findFirst({
       where: {

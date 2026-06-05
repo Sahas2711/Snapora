@@ -350,6 +350,37 @@ export const authService = {
     }
   },
 
+  async getUserPublicProfile(userId: string) {
+    const profile = await userRepository.findProfileById(userId);
+
+    if (!profile) {
+      throw new NotFoundError("User not found");
+    }
+
+    return {
+      id: profile.id,
+      name: profile.name,
+      image: profile.image,
+      username: profile.username,
+      vlogs: profile.vlogs.map((vlog) => ({
+        id: vlog.id,
+        title: vlog.title,
+        description: vlog.description,
+        imageUrl: vlog.imageUrl,
+        viewCount: vlog.viewCount,
+        likeCount: vlog._count.likes,
+        createdAt: vlog.createdAt,
+        updatedAt: vlog.updatedAt,
+        user: {
+          id: profile.id,
+          name: profile.name,
+          image: profile.image,
+          username: profile.username,
+        },
+      })),
+    };
+  },
+
   async getProfile(userId: string) {
     const profile = await userRepository.findProfileById(userId);
 
