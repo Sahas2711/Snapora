@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
 import { ProfileForm } from "@/components/auth/profile-form";
+import { VlogCard } from "@/components/vlogs/vlog-card";
 import { authService } from "@/services/auth.service";
 
 export default async function ProfilePage() {
@@ -60,7 +61,7 @@ export default async function ProfilePage() {
           </div>
 
           <div className="bg-white rounded-xl shadow-md p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
               Your vlogs ({profile.user.vlogs.length})
             </h2>
             {profile.user.vlogs.length === 0 ? (
@@ -68,32 +69,29 @@ export default async function ProfilePage() {
                 You haven&apos;t published any vlogs yet.
               </p>
             ) : (
-              <ul className="space-y-3">
+              <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {profile.user.vlogs.map((vlog) => (
-                  <li
-                    key={vlog.id}
-                    className="border border-gray-200 rounded-lg p-4"
-                  >
+                  <div key={vlog.id} className="relative group">
+                    <VlogCard
+                      vlog={{
+                        ...vlog,
+                        user: {
+                          id: profile.user.id,
+                          name: profile.user.name,
+                          image: profile.user.image ?? null,
+                          username: profile.user.username ?? null,
+                        },
+                      }}
+                    />
                     <Link
-                      href={`/vlogs/${vlog.id}`}
-                      className="font-medium text-gray-900 hover:text-blue-600"
+                      href={`/vlogs/${vlog.id}/edit`}
+                      className="mt-2 inline-block text-sm text-blue-600 hover:underline"
                     >
-                      {vlog.title}
+                      Edit
                     </Link>
-                    <div className="mt-2">
-                      <Link
-                        href={`/vlogs/${vlog.id}/edit`}
-                        className="text-sm text-blue-600 hover:underline"
-                      >
-                        Edit
-                      </Link>
-                    </div>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {vlog.viewCount} views · {vlog.likeCount} likes
-                    </p>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </div>
         </section>
