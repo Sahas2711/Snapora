@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 
 import { loginAction, type ActionState } from "@/actions/auth.actions";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,15 @@ const initialState: ActionState = {};
 
 export function LoginForm() {
   const [state, formAction, pending] = useActionState(loginAction, initialState);
+
+  useEffect(() => {
+    if (state.success) {
+      // Full page reload ensures SessionProvider re-initializes
+      // and immediately fetches the new session from the cookie.
+      // router.push() would keep the old cached session state alive.
+      window.location.href = "/";
+    }
+  }, [state.success]);
 
   return (
     <form action={formAction} className="space-y-4 w-full max-w-md">

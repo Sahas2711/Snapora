@@ -1,7 +1,6 @@
 "use server";
 
 import { AuthError } from "next-auth";
-import { redirect } from "next/navigation";
 
 import { signIn, signOut } from "@/auth";
 import { parseBody } from "@/lib/validators/parse-body";
@@ -40,6 +39,8 @@ export async function loginAction(
     if (result?.error) {
       return { error: "Invalid email or password" };
     }
+
+    return { success: "Logged in" };
   } catch (error) {
     if (error instanceof ValidationError) {
       return { error: error.message, fieldErrors: error.fieldErrors };
@@ -48,10 +49,7 @@ export async function loginAction(
     if (error instanceof AuthError) {
       return { error: "Invalid email or password" };
     }
-    throw error;
-  }
-
-  redirect("/");
+    throw error;  }
 }
 
 export async function registerAction(

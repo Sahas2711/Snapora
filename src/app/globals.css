@@ -1,94 +1,122 @@
 @import "tailwindcss";
 
-/* ─── Light theme ─────────────────────────────────────────── */
+/* ─── Premium Design System ───────────────────────────────── */
+/* Inspired by Linear, Notion, Framer, and Medium aesthetics   */
+
 :root {
   --bg-base:                #ffffff;
-  --bg-subtle:              #f9fafb;
-  --bg-muted:               #f3f4f6;
+  --bg-subtle:              #fafafa;
+  --bg-muted:               #f5f5f5;
   --bg-card:                #ffffff;
   --bg-popover:             #ffffff;
-  --bg-border:              #e5e7eb;
-  --bg-border-soft:         #f3f4f6;
-  --text-base:              #111827;
-  --text-muted:             #6b7280;
-  --text-subtle:            #9ca3af;
-  --ring:                   #3b82f6;
+  --bg-border:              #e5e5e5;
+  --bg-border-soft:         #f0f0f0;
+  --text-base:              #171717;
+  --text-muted:             #737373;
+  --text-subtle:            #a3a3a3;
+  --ring:                   #6366f1;
 
-  /* Base semantic color tokens (different names from @theme inline to avoid circular refs) */
-  --primary-base:           #2563eb;
+  --primary-base:           #6366f1;
   --primary-foreground-base:#ffffff;
-  --secondary-base:         #f3f4f6;
-  --secondary-foreground-base: #1f2937;
-  --muted-base:             #f3f4f6;
-  --muted-foreground-base:  #6b7280;
-  --accent-base:            #f3f4f6;
-  --accent-foreground-base: #1f2937;
+  --secondary-base:         #f5f5f5;
+  --secondary-foreground-base: #171717;
+  --muted-base:             #f5f5f5;
+  --muted-foreground-base:  #737373;
+  --accent-base:            #f5f5f5;
+  --accent-foreground-base: #171717;
   --destructive-base:       #ef4444;
   --destructive-foreground-base: #ffffff;
-  --border-base:            #e5e7eb;
-  --input-base:             #e5e7eb;
+  --border-base:            #e5e5e5;
+  --input-base:             #e5e5e5;
+
+  --success-base:           #10b981;
+  --warning-base:           #f59e0b;
+  --info-base:              #3b82f6;
+
+  --radius-sm:              6px;
+  --radius-md:              8px;
+  --radius-lg:              12px;
+  --radius-xl:              16px;
+  --radius-2xl:             24px;
+  --radius-full:            9999px;
+
+  --shadow-xs:              0 0 0 1px rgba(0,0,0,0.03);
+  --shadow-sm:              0 1px 2px rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md:              0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+  --shadow-lg:              0 10px 15px -3px rgba(0,0,0,0.06), 0 4px 6px -2px rgba(0,0,0,0.03);
+  --shadow-xl:              0 20px 25px -5px rgba(0,0,0,0.08), 0 10px 10px -5px rgba(0,0,0,0.03);
+  --shadow-2xl:             0 25px 50px -12px rgba(0,0,0,0.12);
+  --shadow-glow:            0 0 20px rgba(99,102,241,0.15);
+
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, monospace;
 }
 
-/* ─── Dark theme ──────────────────────────────────────────── */
 .dark {
-  --bg-base:                #0f1117;
-  --bg-subtle:              #161b27;
-  --bg-muted:               #1e2433;
-  --bg-card:                #1a1f2e;
-  --bg-popover:             #1a1f2e;
-  --bg-border:              #2d3348;
-  --bg-border-soft:         #252b3b;
-  --text-base:              #f1f5f9;
-  --text-muted:             #94a3b8;
-  --text-subtle:            #64748b;
-  --ring:                   #60a5fa;
+  --bg-base:                #0a0a0b;
+  --bg-subtle:              #111113;
+  --bg-muted:               #18181b;
+  --bg-card:                #121214;
+  --bg-popover:             #18181b;
+  --bg-border:              #27272a;
+  --bg-border-soft:         #1e1e20;
+  --text-base:              #fafafa;
+  --text-muted:             #a1a1aa;
+  --text-subtle:            #71717a;
+  --ring:                   #818cf8;
 
-  /* Base semantic color tokens (dark overrides) */
-  --primary-base:           #3b82f6;
-  --primary-foreground-base:#ffffff;
-  --secondary-base:         #1e2433;
-  --secondary-foreground-base: #f1f5f9;
-  --muted-base:             #1e2433;
-  --muted-foreground-base:  #94a3b8;
-  --accent-base:            #1e2433;
-  --accent-foreground-base: #f1f5f9;
+  --primary-base:           #818cf8;
+  --primary-foreground-base:#0a0a0b;
+  --secondary-base:         #18181b;
+  --secondary-foreground-base: #fafafa;
+  --muted-base:             #18181b;
+  --muted-foreground-base:  #a1a1aa;
+  --accent-base:            #18181b;
+  --accent-foreground-base: #fafafa;
   --destructive-base:       #ef4444;
   --destructive-foreground-base: #ffffff;
-  --border-base:            #2d3348;
-  --input-base:             #2d3348;
+  --border-base:            #27272a;
+  --input-base:             #27272a;
+
+  --success-base:           #10b981;
+  --warning-base:           #f59e0b;
+  --info-base:              #60a5fa;
+
+  --shadow-xs:              0 0 0 1px rgba(255,255,255,0.03);
+  --shadow-sm:              0 1px 2px rgba(0,0,0,0.3), 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md:              0 4px 6px -1px rgba(0,0,0,0.4), 0 2px 4px -1px rgba(0,0,0,0.3);
+  --shadow-lg:              0 10px 15px -3px rgba(0,0,0,0.5), 0 4px 6px -2px rgba(0,0,0,0.3);
+  --shadow-xl:              0 20px 25px -5px rgba(0,0,0,0.5), 0 10px 10px -5px rgba(0,0,0,0.3);
+  --shadow-2xl:             0 25px 50px -12px rgba(0,0,0,0.6);
+  --shadow-glow:            0 0 20px rgba(129,140,248,0.12);
 }
 
 @theme inline {
   --color-background: var(--bg-base);
   --color-foreground: var(--text-base);
-
   --color-card: var(--bg-card);
   --color-card-foreground: var(--text-base);
-
   --color-popover: var(--bg-popover);
   --color-popover-foreground: var(--text-base);
-
   --color-primary: var(--primary-base);
   --color-primary-foreground: var(--primary-foreground-base);
-
   --color-secondary: var(--secondary-base);
   --color-secondary-foreground: var(--secondary-foreground-base);
-
   --color-muted: var(--muted-base);
   --color-muted-foreground: var(--muted-foreground-base);
-
   --color-accent: var(--accent-base);
   --color-accent-foreground: var(--accent-foreground-base);
-
   --color-destructive: var(--destructive-base);
   --color-destructive-foreground: var(--destructive-foreground-base);
-
   --color-border: var(--border-base);
   --color-input: var(--input-base);
   --color-ring: var(--ring);
+  --color-success: var(--success-base);
+  --color-warning: var(--warning-base);
+  --color-info: var(--info-base);
 
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, monospace;
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
 }
 
 /* ─── Base ────────────────────────────────────────────────── */
@@ -96,16 +124,90 @@ body {
   background-color: var(--bg-base);
   color: var(--text-base);
   font-family: var(--font-sans);
-  transition: background-color 0.15s ease, color 0.15s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ─── Dark-mode friendlies ───────────────────────────────── */
-.dark .shadow-sm  { box-shadow: 0 1px 3px 0 rgba(0,0,0,0.4) !important; }
-.dark .shadow-md  { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5) !important; }
-.dark .shadow-lg  { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.6) !important; }
-.dark .shadow-xl  { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.7) !important; }
+/* ─── Smooth focus ring ──────────────────────────────────── */
+*:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
 
-/* Input / textarea dark overrides */
+/* ─── Scrollbar ──────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-border);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-subtle);
+}
+
+/* ─── Selection ──────────────────────────────────────────── */
+::selection {
+  background-color: var(--primary-base);
+  color: var(--primary-foreground-base);
+}
+
+/* ─── Animations ─────────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
+.animate-slide-up { animation: slide-up 0.6s ease-out; }
+.animate-fade-in { animation: fade-in 0.4s ease-out; }
+.animate-scale-in { animation: scale-in 0.3s ease-out; }
+
+/* ─── Gradient text utility ──────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--primary-base), #a78bfa, #f472b6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glass effect ───────────────────────────────────────── */
+.glass {
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.dark .glass {
+  background: rgba(10,10,11,0.7);
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ─── Dark input overrides ───────────────────────────────── */
 .dark input:not([type="file"]):not([type="checkbox"]),
 .dark textarea,
 .dark select {

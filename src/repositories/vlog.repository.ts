@@ -26,7 +26,7 @@ export const vlogRepository = {
     });
   },
 
-  findMany() {
+  findMany(skip?: number, take?: number) {
     return prisma.vlog.findMany({
       where: {
         deletedAt: null,
@@ -34,7 +34,17 @@ export const vlogRepository = {
       orderBy: {
         createdAt: "desc",
       },
+      skip: skip ?? 0,
+      take: take ?? 100,
       include: publicVlogInclude,
+    });
+  },
+
+  count() {
+    return prisma.vlog.count({
+      where: {
+        deletedAt: null,
+      },
     });
   },
 
@@ -79,6 +89,19 @@ export const vlogRepository = {
     return prisma.vlog.update({
       where: { id },
       data,
+      include: publicVlogInclude,
+    });
+  },
+
+  findLatestUpdated(take: number = 3) {
+    return prisma.vlog.findMany({
+      where: {
+        deletedAt: null,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+      take,
       include: publicVlogInclude,
     });
   },
