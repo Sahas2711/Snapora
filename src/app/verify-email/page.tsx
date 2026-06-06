@@ -16,13 +16,17 @@ function VerifyEmailContent() {
 
   useEffect(() => {
     if (!email || !token) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setState({ error: "Invalid verification link" });
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
       return;
     }
 
     verifyEmailAction(email, token).then((result) => {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setState(result);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLoading(false);
     });
   }, [email, token]);

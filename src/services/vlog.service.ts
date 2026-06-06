@@ -59,6 +59,37 @@ export const vlogService = {
     }
   },
 
+  async getVlogsPaginated(page: number = 1, pageSize: number = 9) {
+    try {
+      const skip = (page - 1) * pageSize;
+      const [vlogs, total] = await Promise.all([
+        vlogRepository.findMany(skip, pageSize),
+        vlogRepository.count(),
+      ]);
+
+      return {
+        vlogs: vlogs.map((vlog) => toPublicVlog(vlog)),
+        pagination: {
+          page,
+          pageSize,
+          total,
+          totalPages: Math.ceil(total / pageSize),
+        },
+      };
+    } catch (error) {
+      throw handlePrismaError(error, "getVlogsPaginated");
+    }
+  },
+
+  async getFeaturedStories() {
+    try {
+      const vlogs = await vlogRepository.findLatestUpdated(3);
+      return vlogs.map((vlog) => toPublicVlog(vlog));
+    } catch (error) {
+      throw handlePrismaError(error, "getFeaturedStories");
+    }
+  },
+
   async getVlogById(id: string) {
     try {
       const vlog = await vlogRepository.findById(id);
