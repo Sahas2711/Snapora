@@ -1,7 +1,7 @@
 "use client";
 
 import type { ChangeEvent, FormEvent } from "react";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -137,11 +137,20 @@ export function CreateVlogForm() {
         return;
       }
 
-      setSuccess("Story published!");
-      router.push(`/vlogs/${payload.data.vlog.id}`);
-      router.refresh();
+      setSuccess("Story published! Redirecting to Discover…");
     });
   }
+
+  // Navigate to Discover after successful publish
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        router.push("/vlogs");
+        router.refresh();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [success, router]);
 
   const busy = isSubmitting || imageUploading || videoUploading;
 

@@ -1,5 +1,6 @@
 "use server";
 
+import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 
 import { signIn, signOut } from "@/auth";
@@ -89,7 +90,8 @@ export async function registerAction(
 }
 
 export async function logoutAction() {
-  await signOut({ redirectTo: "/" });
+  await signOut({ redirect: false });
+  redirect("/");
 }
 
 export async function forgotPasswordAction(
