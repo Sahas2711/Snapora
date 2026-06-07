@@ -1,7 +1,6 @@
 import { AuditAction } from "@prisma/client";
 
 import { auth, signOut } from "@/auth";
-import { AuthenticationError } from "@/lib/errors/auth.error";
 import { handleApiError } from "@/lib/utils/api-handler";
 import { successResponse } from "@/lib/utils/api-response";
 import { auditLogRepository } from "@/repositories/audit-log.repository";
@@ -12,14 +11,12 @@ export async function POST() {
   try {
     const session = await auth();
 
-    if (!session?.user?.id) {
-      throw new AuthenticationError();
+    if (session?.user?.id) {
+      await auditLogRepository.create({
+        action: AuditAction.LOGOUT,
+        userId: session.user.id,
+      });
     }
-
-    await auditLogRepository.create({
-      action: AuditAction.LOGOUT,
-      userId: session.user.id,
-    });
 
     await signOut({ redirect: false });
 

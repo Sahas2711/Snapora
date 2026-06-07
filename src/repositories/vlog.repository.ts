@@ -99,7 +99,7 @@ export const vlogRepository = {
         deletedAt: null,
       },
       orderBy: {
-        updatedAt: "desc",
+        createdAt: "desc",
       },
       take,
       include: publicVlogInclude,

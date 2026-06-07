@@ -10,7 +10,7 @@ export function VlogCard({ vlog }: VlogCardProps) {
   return (
     <Link
       href={`/vlogs/${vlog.id}`}
-      className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-gray-300"
+      className="group block overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg hover:border-border/80"
     >
       {/* Cover image */}
       <div className="relative overflow-hidden">
@@ -24,24 +24,24 @@ export function VlogCard({ vlog }: VlogCardProps) {
 
       {/* Content */}
       <div className="p-5">
-        <h2 className="text-base font-semibold text-gray-900 line-clamp-1 leading-snug">
+        <h2 className="text-base font-semibold text-foreground line-clamp-1 leading-snug">
           {vlog.title}
         </h2>
-        <p className="mt-1 text-sm text-gray-500">
+        <p className="mt-1 text-sm text-muted-foreground">
           {vlog.user.name}
           {vlog.user.username ? (
-            <span className="text-gray-400"> · @{vlog.user.username}</span>
+            <span className="text-muted-foreground/70"> · @{vlog.user.username}</span>
           ) : null}
         </p>
 
         {vlog.description ? (
-          <p className="mt-2.5 text-sm text-gray-600 line-clamp-2 leading-relaxed">
+          <p className="mt-2.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed">
             {vlog.description}
           </p>
         ) : null}
 
         {/* Stats row */}
-        <div className="mt-4 flex items-center gap-4 text-xs text-gray-500">
+        <div className="mt-4 flex items-center gap-4 text-xs text-muted-foreground">
           <span className="flex items-center gap-1">
             {/* Eye icon */}
             <svg

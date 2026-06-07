@@ -57,8 +57,13 @@ function buildAppUrl(path: string) {
   const base =
     process.env.AUTH_URL ??
     process.env.NEXT_PUBLIC_APP_URL ??
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ??
+    process.env.VERCEL_URL ??
     "http://localhost:3000";
-  return `${base.replace(/\/$/, "")}${path}`;
+  const normalized = base.startsWith("http")
+    ? base
+    : `https://${base}`;
+  return `${normalized.replace(/\/$/, "")}${path}`;
 }
 
 function assertCanLogin(status: UserStatus) {
